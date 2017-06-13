@@ -1,0 +1,56 @@
+---
+title: "Make Robot Jeff Talk"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+  runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tuneR)
+library(aws.polly)
+library(dplyr)
+library(httr)
+library(stringr)
+source("robot_helper.R")
+```
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+
+Select you would like the Jeff robot to use when creating your video. 
+
+```{r}
+selectInput("voice", label = "Voice:",
+            choices = c("Joanna","Salli","Kimberly",
+                        "Kendra", "Justin","Joey","Ivy"), selected = "Joey")
+```
+
+
+Column
+-----------------------------------------------------------------------
+
+### What do you want Jeff to say
+    
+```{r}
+textInput("text_in","Jeff says:",value="",placeholder="James you are a steely eyed missle man.",width='100%')
+actionButton("go","Talk Jeff!", icon=icon("bullhorn"))
+```
+    
+### Add some of these words to your text to see actions
+
+* __"To my left"__ - points left
+* __"To my right"__ - points right
+* __"Applause"__ - claps
+* __"Clap"__ - claps
+
+```{r}
+observeEvent(input$go,{
+  wav = synthesize(input$text_in,voice=input$voice)
+  writeWave(wav,file="~/text.wav")
+  run_robot(input$text_in,wav)
+})
+```
+
