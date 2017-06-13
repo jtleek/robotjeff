@@ -51,6 +51,7 @@ observeEvent(input$go,{
   wav = synthesize(input$text_in,voice=input$voice)
   writeWave(wav,file="~/text.wav")
   run_robot(input$text_in,wav)
+  cat("jeff")
 })
 ```
 
